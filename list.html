@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+
+    <title>Shopping List</title>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h1 class="text-center">Shopping List</h1>
+      <form class="form-inline mt-5">
+        <input
+          type="text"
+          class="form-control mb-2 mr-2"
+          id="item-input"
+          placeholder="Enter an item"
+        />
+        <button type="submit" class="btn btn-primary mb-2" id="add-item-btn">
+          Add Item
+        </button>
+      </form>
+      <ul class="list-group mt-5" id="shopping-list">
+        <!-- Shopping list items will be added here dynamically -->
+      </ul>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      // Get references to form elements
+      const itemInput = document.querySelector("#item-input");
+      const addItemBtn = document.querySelector("#add-item-btn");
+      const shoppingList = document.querySelector("#shopping-list");
+
+      // Load the shopping list items from local storage
+      let items = JSON.parse(localStorage.getItem("items")) || [];
+
+      // Render the shopping list items
+      function renderItems() {
+        shoppingList.innerHTML = "";
+        items.forEach(function (item, index) {
+          const listItem = document.createElement("li");
+          listItem.classList.add("list-group-item");
+          listItem.innerHTML = `
+            <span class="item-text">${item}</span>
+            <div class="float-right">
+              <button type="button" class="btn btn-sm btn-primary edit-btn">Edit</button>
+              <button type="button" class="btn btn-sm btn-danger delete-btn">Delete</button>
+            </div>
+          `;
+
+          // Handle the edit button click
+          listItem
+            .querySelector(".edit-btn")
+            .addEventListener("click", function () {
+              itemInput.value = item;
+              items.splice(index, 1);
+              renderItems();
+              localStorage.setItem("items", JSON.stringify(items));
+            });
+
+          // Handle the delete button click
+          listItem
+            .querySelector(".delete-btn")
+            .addEventListener("click", function () {
+              items.splice(index, 1);
+              renderItems();
+              localStorage.setItem("items", JSON.stringify(items));
+            });
+
+          shoppingList.appendChild(listItem);
+        });
+      }
+
+      renderItems();
+
+      // Handle the add item form submit
+      addItemBtn.addEventListener("click", function (event) {
+        event.preventDefault();
+        items.push(itemInput.value);
+        itemInput.value = "";
+        renderItems();
+        localStorage.setItem("items", JSON.stringify(items));
+      });
+    </script>
+  </body>
+</html>
